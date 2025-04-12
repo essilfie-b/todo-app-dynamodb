@@ -1,0 +1,27 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.bernard:TodoApp >-------------------------
+[INFO] Building TodoApp 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ TodoApp ---
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ TodoApp ---
+[INFO] Copying 4 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ TodoApp ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 7 source files with javac [debug deprecation release 21] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ TodoApp ---
+[INFO] skip non existing resourceDirectory /ramdisk/code/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ TodoApp ---
+[INFO] No sources to compile
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.845 s
+[INFO] Finished at: 2025-04-12T11:52:49Z
+[INFO] ------------------------------------------------------------------------

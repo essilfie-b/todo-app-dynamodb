@@ -1,6 +1,5 @@
 package com.todo.TodoApp;
 
-import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -10,7 +9,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Repository
 public class TaskRepository{
 
     private final DynamoDbTable<Task> taskTable;

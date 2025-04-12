@@ -1,0 +1,110 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for Todo App with Lambda and DynamoDB
+
+Globals:
+  Function:
+    Runtime: java21
+    MemorySize: 512
+    Timeout: 30
+    Environment:
+      Variables:
+        DYNAMODB_TABLE_NAME: !Ref TodoTable
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      AllowOrigin: "'*'"
+
+Resources:
+  TodoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Todos
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  GetTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.todo.TodoApp.lambda.GetTasksHandler::handleRequest
+      CodeUri: ./
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TodoTable
+      Events:
+        GetTasks:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: get
+
+  CreateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.todo.TodoApp.lambda.CreateTaskHandler::handleRequest
+      CodeUri: ./
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Events:
+        CreateTask:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: post
+
+  UpdateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.todo.TodoApp.lambda.UpdateTaskHandler::handleRequest
+      CodeUri: ./
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Events:
+        UpdateTask:
+          Type: Api
+          Properties:
+            Path: /tasks/{id}
+            Method: put
+
+  DeleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.todo.TodoApp.lambda.DeleteTaskHandler::handleRequest
+      CodeUri: ./
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Events:
+        DeleteTask:
+          Type: Api
+          Properties:
+            Path: /tasks/{id}
+            Method: delete
+
+  DeleteCompletedTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.todo.TodoApp.lambda.DeleteCompletedTasksHandler::handleRequest
+      CodeUri: ./
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Events:
+        DeleteCompletedTasks:
+          Type: Api
+          Properties:
+            Path: /tasks/completed
+            Method: delete
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
