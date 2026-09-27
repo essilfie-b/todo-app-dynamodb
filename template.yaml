@@ -4,17 +4,34 @@ Description: SAM template for Todo App with Lambda and DynamoDB
 
 Globals:
   Function:
-    Runtime: java21
+    Runtime: java21 # Changed from java21 to java17
     MemorySize: 512
     Timeout: 30
     Environment:
       Variables:
         DYNAMODB_TABLE_NAME: !Ref TodoTable
+
   Api:
     Cors:
       AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
-      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-      AllowOrigin: "'*'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Access-Control-Allow-Origin'"
+      AllowOrigin: "'http://127.0.0.1:5500'"
+      AllowCredentials: "'true'"
+    GatewayResponses:
+      DEFAULT_4XX:
+        ResponseParameters:
+          Headers:
+            Access-Control-Allow-Origin: "'http://127.0.0.1:5500'"
+            Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Access-Control-Allow-Origin'"
+            Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+            Access-Control-Allow-Credentials: "'true'"
+      DEFAULT_5XX:
+        ResponseParameters:
+          Headers:
+            Access-Control-Allow-Origin: "'http://127.0.0.1:5500'"
+            Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Access-Control-Allow-Origin'"
+            Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+            Access-Control-Allow-Credentials: "'true'"
 
 Resources:
   TodoTable:
@@ -37,6 +54,9 @@ Resources:
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref TodoTable
+      SnapStart:
+        ApplyOn: PublishedVersions
+      AutoPublishAlias: live
       Events:
         GetTasks:
           Type: Api
@@ -52,6 +72,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
+      SnapStart:
+        ApplyOn: PublishedVersions
+      AutoPublishAlias: live
       Events:
         CreateTask:
           Type: Api
@@ -67,6 +90,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
+      SnapStart:
+        ApplyOn: PublishedVersions
+      AutoPublishAlias: live
       Events:
         UpdateTask:
           Type: Api
@@ -82,6 +108,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
+      SnapStart:
+        ApplyOn: PublishedVersions
+      AutoPublishAlias: live
       Events:
         DeleteTask:
           Type: Api
@@ -97,6 +126,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
+      SnapStart:
+        ApplyOn: PublishedVersions
+      AutoPublishAlias: live
       Events:
         DeleteCompletedTasks:
           Type: Api

@@ -28,26 +28,33 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-events</artifactId>
-            <version>3.11.1</version>
+            <version>3.14.0</version>
         </dependency>
-
-        <!-- AWS SDK DynamoDB dependencies -->
+        <dependency>
+            <groupId>org.crac</groupId>
+            <artifactId>crac</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <!-- AWS SDK DynamoDB dependencies (provided by layer) -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb</artifactId>
             <version>${aws.sdk.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb-enhanced</artifactId>
             <version>${aws.sdk.version}</version>
+            <scope>compile</scope>
         </dependency>
 
-        <!-- Jackson for JSON processing -->
+        <!-- Jackson for JSON processing (provided by layer) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Lombok for reducing boilerplate code -->
@@ -69,6 +76,16 @@
                 <version>3.4.1</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>
@@ -105,3 +122,5 @@
         </plugins>
     </build>
 </project>
+
+

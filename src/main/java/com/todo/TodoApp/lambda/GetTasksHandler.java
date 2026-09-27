@@ -7,20 +7,27 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todo.TodoApp.Task;
 import com.todo.TodoApp.TaskRepository;
+import org.crac.Core;
+import org.crac.Resource;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GetTasksHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-    private final TaskRepository repository;
+public class GetTasksHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent>, Resource {
+    private TaskRepository repository;
     private final ObjectMapper objectMapper;
 
     public GetTasksHandler() {
-        DynamoDbEnhancedClient dbClient = DynamoDbEnhancedClient.create();
-        this.repository = new TaskRepository(dbClient);
+        Core.getGlobalContext().register(this);
+        initializeResources();
         this.objectMapper = new ObjectMapper();
+    }
+
+    private void initializeResources() {
+        DynamoDbEnhancedClient dbClient = DynamoDbEnhancedClient.create();
+        repository = new TaskRepository(dbClient);
     }
 
     @Override
@@ -63,5 +70,15 @@ public class GetTasksHandler implements RequestHandler<APIGatewayProxyRequestEve
                     .withHeaders(headers)
                     .withBody("Error processing request: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void beforeCheckpoint(org.crac.Context<? extends Resource> context) throws Exception {
+
+    }
+
+    @Override
+    public void afterRestore(org.crac.Context<? extends Resource> context) throws Exception {
+        initializeResources();
     }
 }

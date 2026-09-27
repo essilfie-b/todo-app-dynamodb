@@ -6,18 +6,26 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.todo.TodoApp.Task;
 import com.todo.TodoApp.TaskRepository;
+import org.crac.Core;
+import org.crac.Resource;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DeleteCompletedTasksHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-    private final TaskRepository repository;
+public class DeleteCompletedTasksHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent>, Resource {
+    private TaskRepository repository;
 
     public DeleteCompletedTasksHandler() {
+        Core.getGlobalContext().register(this);
+        initializeResources();
+    }
+
+    private void initializeResources() {
         DynamoDbEnhancedClient dbClient = DynamoDbEnhancedClient.create();
-        this.repository = new TaskRepository(dbClient);
+        repository = new TaskRepository(dbClient);
+
     }
 
     @Override
@@ -50,5 +58,15 @@ public class DeleteCompletedTasksHandler implements RequestHandler<APIGatewayPro
                     .withHeaders(headers)
                     .withBody("Error processing request: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void beforeCheckpoint(org.crac.Context<? extends Resource> context) throws Exception {
+
+    }
+
+    @Override
+    public void afterRestore(org.crac.Context<? extends Resource> context) throws Exception {
+        initializeResources();
     }
 }
